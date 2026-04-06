@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>العزازي جولد - تطبيق أسعار الذهب</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C7A664;
+    --gold-light: #E8C87A;
+    --gold-dark: #8B6914;
+    --dark: #111111;
+    --dark2: #1A1A1A;
+    --dark3: #232323;
+    --white: #F5F0E8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--dark);
+    color: var(--white);
+    font-family: 'Cairo', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: 
+      radial-gradient(ellipse at 20% 20%, rgba(199,166,100,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(199,166,100,0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Gold particles */
+  .particles {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--gold);
+    border-radius: 50%;
+    animation: float linear infinite;
+    opacity: 0;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.3; }
+    100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+  }
+
+  /* Header */
+  header {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 60px 20px 40px;
+    border-bottom: 1px solid rgba(199,166,100,0.2);
+  }
+
+  .logo-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    animation: fadeInDown 1s ease;
+  }
+
+  .app-icon {
+    width: 120px;
+    height: 120px;
+    border-radius: 28px;
+    background: linear-gradient(135deg, var(--dark3), #1A1200);
+    border: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    box-shadow: 0 0 40px rgba(199,166,100,0.3), 0 20px 60px rgba(0,0,0,0.5);
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 40px rgba(199,166,100,0.3), 0 20px 60px rgba(0,0,0,0.5); }
+    50% { box-shadow: 0 0 60px rgba(199,166,100,0.5), 0 20px 60px rgba(0,0,0,0.5); }
+  }
+
+  .app-name {
+    font-family: 'Amiri', serif;
+    font-size: 3em;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    line-height: 1.2;
+  }
+
+  .app-tagline {
+    font-size: 1.1em;
+    color: rgba(245,240,232,0.6);
+    font-weight: 300;
+    letter-spacing: 2px;
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 30px 20px;
+    border-bottom: 1px solid rgba(199,166,100,0.1);
+    animation: fadeIn 1.2s ease;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-number {
+    font-size: 1.8em;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .stat-label {
+    font-size: 0.8em;
+    color: rgba(245,240,232,0.5);
+    margin-top: 4px;
+  }
+
+  /* Main content */
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Download section */
+  .download-section {
+    text-align: center;
+    padding: 60px 20px;
+    animation: fadeInUp 1s ease 0.3s both;
+  }
+
+  .download-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, rgba(199,166,100,0.15), rgba(199,166,100,0.05));
+    border: 1px solid rgba(199,166,100,0.3);
+    border-radius: 50px;
+    padding: 8px 20px;
+    font-size: 0.85em;
+    color: var(--gold);
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+  }
+
+  .download-title {
+    font-size: 2em;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--white);
+  }
+
+  .download-subtitle {
+    color: rgba(245,240,232,0.5);
+    margin-bottom: 40px;
+    font-size: 1em;
+    line-height: 1.6;
+  }
+
+  .download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: var(--dark);
+    text-decoration: none;
+    padding: 18px 50px;
+    border-radius: 50px;
+    font-size: 1.2em;
+    font-weight: 700;
+    font-family: 'Cairo', sans-serif;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 40px rgba(199,166,100,0.4);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .download-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .download-btn:hover::before { left: 100%; }
+
+  .download-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 60px rgba(199,166,100,0.6);
+  }
+
+  .download-btn:active { transform: translateY(0); }
+
+  .btn-icon { font-size: 1.3em; }
+
+  .file-info {
+    margin-top: 16px;
+    font-size: 0.85em;
+    color: rgba(245,240,232,0.4);
+  }
+
+  /* Features */
+  .features-section {
+    padding: 20px 20px 60px;
+    animation: fadeInUp 1s ease 0.5s both;
+  }
+
+  .section-title {
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: 700;
+    margin-bottom: 30px;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .feature-card {
+    background: linear-gradient(135deg, rgba(35,35,35,0.8), rgba(26,18,0,0.5));
+    border: 1px solid rgba(199,166,100,0.2);
+    border-radius: 16px;
+    padding: 24px 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .feature-card:hover {
+    border-color: rgba(199,166,100,0.5);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(199,166,100,0.15);
+  }
+
+  .feature-icon {
+    font-size: 2.2em;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .feature-title {
+    font-size: 0.95em;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .feature-desc {
+    font-size: 0.8em;
+    color: rgba(245,240,232,0.5);
+    line-height: 1.5;
+  }
+
+  /* Prices preview */
+  .prices-section {
+    padding: 20px 20px 60px;
+    animation: fadeInUp 1s ease 0.7s both;
+  }
+
+  .prices-table {
+    background: linear-gradient(135deg, rgba(35,35,35,0.9), rgba(26,18,0,0.7));
+    border: 1px solid rgba(199,166,100,0.2);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .prices-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    background: linear-gradient(135deg, rgba(199,166,100,0.2), rgba(199,166,100,0.1));
+    padding: 14px 20px;
+    font-size: 0.9em;
+    font-weight: 700;
+    color: var(--gold);
+    border-bottom: 1px solid rgba(199,166,100,0.2);
+  }
+
+  .price-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 14px 20px;
+    border-bottom: 1px solid rgba(199,166,100,0.08);
+    font-size: 0.9em;
+    transition: background 0.2s;
+  }
+
+  .price-row:last-child { border-bottom: none; }
+  .price-row:hover { background: rgba(199,166,100,0.05); }
+
+  .price-label { color: var(--white); font-weight: 600; }
+  .price-buy { color: #4CAF50; font-weight: 700; }
+  .price-sell { color: #FF5252; font-weight: 700; }
+
+  .prices-note {
+    text-align: center;
+    padding: 16px;
+    font-size: 0.8em;
+    color: rgba(245,240,232,0.4);
+    border-top: 1px solid rgba(199,166,100,0.1);
+  }
+
+  /* How to install */
+  .install-section {
+    padding: 20px 20px 60px;
+    animation: fadeInUp 1s ease 0.9s both;
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(35,35,35,0.5);
+    border: 1px solid rgba(199,166,100,0.15);
+    border-radius: 12px;
+    padding: 16px 20px;
+  }
+
+  .step-number {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: var(--dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1em;
+    flex-shrink: 0;
+  }
+
+  .step-text {
+    font-size: 0.95em;
+    color: rgba(245,240,232,0.8);
+    line-height: 1.5;
+  }
+
+  .step-text strong {
+    color: var(--gold);
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    border-top: 1px solid rgba(199,166,100,0.15);
+    position: relative;
+    z-index: 1;
+  }
+
+  .footer-logo {
+    font-family: 'Amiri', serif;
+    font-size: 1.8em;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+  }
+
+  .footer-text {
+    font-size: 0.85em;
+    color: rgba(245,240,232,0.3);
+  }
+
+  .gold-divider {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 20px auto;
+  }
+
+  /* Animations */
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Mobile */
+  @media (max-width: 480px) {
+    .app-name { font-size: 2.2em; }
+    .stats-bar { gap: 20px; }
+    .download-btn { padding: 16px 35px; font-size: 1.1em; }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Particles -->
+<div class="particles" id="particles"></div>
+
+<!-- Header -->
+<header>
+  <div class="logo-section">
+    <div class="app-icon">🥇</div>
+    <div>
+      <div class="app-name">العزازي جولد</div>
+      <div class="app-tagline">أسعار الذهب لحظة بلحظة</div>
+    </div>
+  </div>
+</header>
+
+<!-- Stats -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-number">لحظي</div>
+    <div class="stat-label">تحديث الأسعار</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number">7+</div>
+    <div class="stat-label">عيارات ذهب</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number">مجاني</div>
+    <div class="stat-label">التحميل والاستخدام</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number">Android</div>
+    <div class="stat-label">متوافق مع</div>
+  </div>
+</div>
+
+<!-- Download -->
+<div class="container">
+  <div class="download-section">
+    <div class="download-badge">✨ الإصدار الأول متاح الآن</div>
+    <div class="download-title">حمّل التطبيق مجاناً</div>
+    <div class="download-subtitle">
+      تابع أسعار الذهب في مصر لحظة بلحظة<br>
+      مع إشعارات تلقائية وإمكانية مشاركة الأسعار
+    </div>
+    <a href="https://github.com/a7med3nany/azzazi-gold/raw/refs/heads/main/Gold_Price_Egypt_release.apk" 
+       class="download-btn" download>
+      <span class="btn-icon">⬇️</span>
+      تحميل مباشر
+    </a>
+    <div class="file-info">APK • Android 7.0+ • مجاني 100%</div>
+  </div>
+
+  <!-- Features -->
+  <div class="features-section">
+    <div class="section-title">مميزات التطبيق</div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="feature-icon">⚡</span>
+        <div class="feature-title">تحديث لحظي</div>
+        <div class="feature-desc">أسعار محدثة كل 5 ثواني من السوق المحلي</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔔</span>
+        <div class="feature-title">إشعارات تلقائية</div>
+        <div class="feature-desc">إشعار بسعر عيار 21 كل ربع ساعة</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📤</span>
+        <div class="feature-title">مشاركة الأسعار</div>
+        <div class="feature-desc">شارك صورة بالأسعار اللحظية مع أصحابك</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">💰</span>
+        <div class="feature-title">كل العيارات</div>
+        <div class="feature-desc">24 - 22 - 21 - 18 - 12 + أونصة وجنيه ذهب</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">💵</span>
+        <div class="feature-title">أسعار الدولار</div>
+        <div class="feature-desc">دولار البنك ودولار الصاغة مع الفرق</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🌍</span>
+        <div class="feature-title">السعر العالمي</div>
+        <div class="feature-desc">سعر الذهب العالمي بالدولار الأمريكي</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Prices Preview -->
+  <div class="prices-section">
+    <div class="section-title">نموذج الأسعار</div>
+    <div class="prices-table">
+      <div class="prices-header">
+        <span>العيار</span>
+        <span>شراء</span>
+        <span>بيع</span>
+      </div>
+      <div class="price-row">
+        <span class="price-label">عيار 24</span>
+        <span class="price-buy">8,200 ج</span>
+        <span class="price-sell">8,150 ج</span>
+      </div>
+      <div class="price-row">
+        <span class="price-label">عيار 21</span>
+        <span class="price-buy">7,180 ج</span>
+        <span class="price-sell">7,130 ج</span>
+      </div>
+      <div class="price-row">
+        <span class="price-label">عيار 18</span>
+        <span class="price-buy">6,155 ج</span>
+        <span class="price-sell">6,110 ج</span>
+      </div>
+      <div class="price-row">
+        <span class="price-label">الأونصة</span>
+        <span class="price-buy">254,000 ج</span>
+        <span class="price-sell">252,000 ج</span>
+      </div>
+      <div class="price-row">
+        <span class="price-label">جنيه الذهب</span>
+        <span class="price-buy">57,440 ج</span>
+        <span class="price-sell">57,040 ج</span>
+      </div>
+      <div class="prices-note">* الأسعار تقريبية للتوضيح — التطبيق يعرض الأسعار الحقيقية لحظياً</div>
+    </div>
+  </div>
+
+  <!-- How to install -->
+  <div class="install-section">
+    <div class="section-title">كيفية التثبيت</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-text">اضغط على زرار <strong>تحميل مباشر</strong> بالأعلى</div>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-text">افتح الملف من <strong>التنزيلات</strong> على جهازك</div>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-text">اضغط <strong>تثبيت</strong> — لو ظهرت رسالة السماح بالتثبيت من مصادر غير معروفة اضغط <strong>السماح</strong></div>
+      </div>
+      <div class="step">
+        <div class="step-number">4</div>
+        <div class="step-text">افتح التطبيق واستمتع بمتابعة <strong>أسعار الذهب لحظياً</strong> 🥇</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-logo">العزازي جولد</div>
+  <div class="gold-divider"></div>
+  <div class="footer-text">
+    تطبيق مصري لمتابعة أسعار الذهب في مصر<br>
+    جميع الأسعار مصدرها السوق المحلي المصري
+  </div>
+</footer>
+
+<script>
+  // Create particles
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    p.style.width = p.style.height = (Math.random() * 3 + 1) + 'px';
+    container.appendChild(p);
+  }
+</script>
+
+</body>
+</html>
